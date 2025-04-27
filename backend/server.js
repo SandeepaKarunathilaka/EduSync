@@ -1,32 +1,35 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const courseRoutes = require("./modules/course/route");
-const chapterRoutes = require("./modules/chapter/route");
-const lectureRoutes = require("./modules/lecture/route");
-const enrollmentRoutes = require("./modules/enrollment/route");
+
+
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+require('dotenv').config();
+
+// Import route modules
+const lecturerRoutes = require('./routes/lecturerRoutes');
+const scheduleRoutes = require('./routes/scheduleRoutes');
+const availabilityRoutes = require('./routes/availabilityRoutes');
+
 const app = express();
-const PORT = 5001;
-const MONGO_URI = "mongodb+srv://shekya123madubha:u220vrsMzi2UMiMO@cluster0.9qqy9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const PORT = process.env.PORT || 5000;  // Port number (either from environment variable or default to 5000)
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+app.use(cors());  // Enable Cross-Origin Resource Sharing
+app.use(bodyParser.json());  // Parse incoming JSON data
 
-// Routes
-app.use("/api/courses", courseRoutes);
-app.use("/api/chapters", chapterRoutes);
-app.use("/api/lectures", lectureRoutes);
-app.use("/api/enrollments", enrollmentRoutes);
+// Use routes
+app.use('/api/lecturers', lecturerRoutes);
+app.use('/api/schedules', scheduleRoutes);
+app.use('/api/availability', availabilityRoutes);
+
 // Connect to MongoDB
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => {
-    console.log("Connected to MongoDB");
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Error connecting to MongoDB:", err);
-  });
+  .connect(process.env.MONGO_URI)  // MongoDB URI from .env
+  .then(() => console.log('MongoDB connected'))  // Success message
+  .catch((err) => console.error('MongoDB connection error:', err));  // Error message
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
