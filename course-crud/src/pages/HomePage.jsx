@@ -97,24 +97,26 @@ const HomePage = () => {
 
   return (
     <Layout style={{ minHeight: "100vh", background: "#f7faff" }}>
+      {/* --- Creative Header Starts --- */}
       <Header
         style={{
           background: "#0a1930",
           padding: "0 20px",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          gap: "12px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={logo} alt="logo" style={{ height: 40, marginRight: 12 }} />
-          <Title level={3} style={{ color: "white", margin: 0 }}>
-            SkillSync
-          </Title>
-        </div>
+        <img src={logo} alt="SkillSync Logo" style={{ height: 48, width: 48 }} />
+        <Title level={3} style={{ color: "#fff", margin: 0 }}>
+          <span style={{ fontWeight: 700 }}>Skill</span>
+          <span style={{ color: "#3b82f6", fontWeight: 700 }}>Sync</span>
+        </Title>
       </Header>
+      {/* --- Creative Header Ends --- */}
 
       <Content style={{ width: "100%", maxWidth: "1200px", margin: "0 auto", padding: "20px" }}>
+        {/* Search Bar */}
         <Row justify="center" style={{ marginBottom: 30 }}>
           <Col xs={24} sm={20} md={16} lg={12}>
             <Input.Search
@@ -127,6 +129,7 @@ const HomePage = () => {
           </Col>
         </Row>
 
+        {/* Empower Section */}
         <div style={{ textAlign: "center", marginBottom: 40 }}>
           <Title level={2}>
             Empower your future with the courses designed to <span style={{ color: "#3b82f6" }}>fit your choice.</span>
@@ -136,6 +139,7 @@ const HomePage = () => {
           </Paragraph>
         </div>
 
+        {/* Download PDF Button */}
         <Row justify="end" style={{ marginBottom: 20 }}>
           <Col>
             <motion.div whileHover={{ scale: 1.05 }}>
@@ -152,6 +156,7 @@ const HomePage = () => {
           </Col>
         </Row>
 
+        {/* Courses */}
         {filteredCourses.length > 0 ? (
           <Row gutter={[24, 24]}>
             {filteredCourses.map((course) => (
@@ -189,26 +194,33 @@ const HomePage = () => {
           <Empty description="No courses available" style={{ marginTop: 60 }} />
         )}
 
-        {/* Testimonials Section */}
-        <div style={{ textAlign: "center", marginTop: 80 }}>
+        {/* Testimonials */}
+        <div style={{ textAlign: "center", marginTop: 80, marginBottom: 80 }}>
           <Title level={2}>Testimonials</Title>
           <Paragraph style={{ color: "#666", fontSize: 16, marginBottom: 40 }}>
             Hear from our learners as they share their journeys of transformation, success, and how our platform has made a difference in their lives.
           </Paragraph>
           <Row gutter={[24, 24]} justify="center">
-            {testimonials.map((t, index) => (
+            {testimonials.map((testimonial, index) => (
               <Col xs={24} sm={12} md={8} key={index}>
-                <Card bordered style={{ borderRadius: 10 }}>
+                <Card bordered style={{ borderRadius: 10, minHeight: 280 }}>
                   <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
-                    <img src={t.img} alt={t.name} style={{ width: 50, height: 50, borderRadius: "50%", marginRight: 16 }} />
+                    <img src={testimonial.img} alt={testimonial.name} style={{ width: 50, height: 50, borderRadius: "50%", marginRight: 16 }} />
                     <div>
-                      <Text strong>{t.name}</Text>
+                      <Text strong>{testimonial.name}</Text>
                       <br />
-                      <Text type="secondary" style={{ fontSize: 12 }}>{t.role}</Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>{testimonial.role}</Text>
                     </div>
                   </div>
-                  <Rate disabled defaultValue={t.review} style={{ marginBottom: 12 }} />
-                  <Paragraph style={{ fontSize: 14 }}>{t.text}</Paragraph>
+                  <div style={{ fontSize: "20px", color: "#fadb14", marginBottom: 10 }}>
+                    {Array.from({ length: testimonial.review }).map((_, idx) => (
+                      <span key={idx}>★</span>
+                    ))}
+                    {Array.from({ length: 5 - testimonial.review }).map((_, idx) => (
+                      <span key={idx} style={{ color: "#ddd" }}>★</span>
+                    ))}
+                  </div>
+                  <Paragraph style={{ fontSize: 14 }}>{testimonial.text}</Paragraph>
                   <a href="#">Read more</a>
                 </Card>
               </Col>
@@ -216,8 +228,8 @@ const HomePage = () => {
           </Row>
         </div>
 
-        {/* Learn Anything Section */}
-        <div style={{ textAlign: "center", marginTop: 100, marginBottom: 100 }}>
+        {/* Learn Anything */}
+        <div style={{ textAlign: "center", marginBottom: 100 }}>
           <Title level={2}>Learn anything, anytime, anywhere</Title>
           <Paragraph style={{ color: "#666", fontSize: 16, maxWidth: 600, margin: "0 auto 40px" }}>
             Incididunt sint fugiat pariatur cupidatat consectetur sit cillum anim id veniam aliqua proident excepteur commodo do ea.
@@ -230,6 +242,66 @@ const HomePage = () => {
 
       </Content>
 
+      {/* Modal */}
+      <Modal
+        title={<Title level={4}>{selectedCourse?.title}</Title>}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="close" onClick={handleCancel}>Close</Button>,
+          <Button
+            key="enroll"
+            type="primary"
+            style={{ backgroundColor: "#0a1930", borderColor: "#0a1930" }}
+            onClick={async () => {
+              await enrollmentApi.createEnrollment({
+                course: selectedCourse._id,
+                student: "Student 001",
+              });
+              message.success("Enrolled Successfully!");
+              handleCancel();
+            }}
+          >
+            Enroll Now
+          </Button>,
+        ]}
+        centered
+      >
+        {selectedCourse && (
+          <>
+            <img
+              src={selectedCourse.courseThumbnail}
+              alt={selectedCourse.title}
+              style={{ width: "100%", height: 200, objectFit: "cover", borderRadius: 10, marginBottom: 20 }}
+            />
+            <Paragraph>{selectedCourse.description}</Paragraph>
+            <Collapse ghost>
+              {selectedCourse.chapters?.map((chapter) => (
+                <Panel header={chapter.name} key={chapter._id}>
+                  {chapter.lectures?.map((lecture) => (
+                    <Row
+                      key={lecture._id}
+                      justify="space-between"
+                      align="middle"
+                      style={{ padding: "5px 0" }}
+                    >
+                      <Col><Text>{lecture.title}</Text></Col>
+                      <Col>
+                        {lecture.isPreview ? (
+                          <Tag color="green">Preview</Tag>
+                        ) : (
+                          <LockOutlined />
+                        )}
+                      </Col>
+                    </Row>
+                  ))}
+                </Panel>
+              ))}
+            </Collapse>
+          </>
+        )}
+      </Modal>
+
       <Footer style={{ textAlign: "center", background: "#0a1930", color: "#ffffff" }}>
         © 2025 SkillSync | Designed by Karunathilaka S M
       </Footer>
@@ -238,6 +310,12 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
+
+
+
+
+
 
 
 
