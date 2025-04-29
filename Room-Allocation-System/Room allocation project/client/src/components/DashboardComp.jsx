@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
-import { FaHome, FaBook, FaCalendarAlt, FaChartBar, FaDoorOpen, FaBars, FaUser } from "react-icons/fa";
+import { FaHome, FaBook, FaCalendarAlt, FaChartBar, FaDoorOpen, FaBars, FaTimes, FaUser } from "react-icons/fa";
 import LogoImage from "../images/pti.jpg";
 
 export default function Sidebar({ children }) {
@@ -21,66 +21,80 @@ export default function Sidebar({ children }) {
     { name: "Booking Management", icon: <FaCalendarAlt />, path: "/booking" },
     { name: "Class Schedules", icon: <FaCalendarAlt />, path: "/class-management" },
     { name: "Reports & Analytics", icon: <FaChartBar />, path: "/reports" },
-    { name: "Logout", icon: <FaDoorOpen />, path: "/sign-in" },
   ];
 
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-full bg-sidebar-bg text-sidebar-text transition-all duration-300 ease-in-out flex flex-col justify-between p-2.5 shadow-[2px_0_5px_rgba(0,0,0,0.2)] overflow-y-auto ${
-          expanded ? "w-[250px]" : "w-20"
+        className={`fixed top-0 left-0 h-full bg-gray-800 text-gray-100 flex flex-col justify-between p-4 shadow-[2px_0_5px_rgba(0,0,0,0.2)] transition-all duration-300 ease-in-out z-50 overflow-y-auto ${
+          expanded ? "w-64" : "w-20"
         }`}
       >
         {/* Logo */}
-        <Link to="/" className="flex items-center text-white no-underline">
+        <Link to="/" className="flex items-center text-white no-underline mb-4">
           <img
             src={LogoImage}
             alt="PTI Logo"
-            className="w-[45px] h-auto mr-2.5 rounded-[5px]"
+            className={`h-12 rounded-md transition-all duration-300 ${
+              expanded ? "w-12 mr-3" : "w-12"
+            }`}
           />
+          {expanded && <span className="text-xl font-bold">PTI</span>}
         </Link>
 
         {/* Toggle Button */}
-        <div className="text-right p-2.5">
+        <div className="flex justify-end mb-4">
           <button
             onClick={toggleSidebar}
-            className="bg-none border-none text-sidebar-text text-xl cursor-pointer"
+            className="bg-transparent border-none text-gray-100 text-xl cursor-pointer hover:bg-gray-700 p-2 rounded-full transition-colors duration-200"
           >
-            <FaBars />
+            {expanded ? <FaTimes /> : <FaBars />}
           </button>
         </div>
 
         {/* Sidebar Menu */}
-        <div className="flex-1">
+        <nav className="flex-1">
           {menuItems.map((item, index) => (
             <div
               key={index}
               onClick={() => navigate(item.path)}
-              className={`flex items-center gap-2.5 p-3 my-1.5 cursor-pointer rounded-[5px] transition-colors duration-300 ${
-                location.pathname === item.path ? "bg-active-item" : "bg-transparent"
+              className={`flex items-center gap-3 p-3 my-1 rounded-md cursor-pointer transition-colors duration-300 group ${
+                location.pathname === item.path
+                  ? "bg-teal-600 text-white"
+                  : "hover:bg-gray-700 text-gray-100"
               }`}
             >
+              {/* Icon */}
               <span className="text-xl">{item.icon}</span>
-              {expanded && <span className="text-base">{item.name}</span>}
+
+              {/* Menu Item Name */}
+              {expanded && <span className="text-base font-medium">{item.name}</span>}
+
+              {/* Tooltip for Collapsed State */}
+              {!expanded && (
+                <div className="absolute left-20 bg-gray-600 text-white text-sm rounded-md px-2 py-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  {item.name}
+                </div>
+              )}
             </div>
           ))}
-        </div>
+        </nav>
 
         {/* Logout at Bottom */}
         <div
           onClick={() => navigate("/sign-in")}
-          className="p-3 bg-logout-bg text-center cursor-pointer rounded-[5px] mb-2.5 flex items-center justify-center"
+          className="flex items-center gap-3 p-3 my-1 rounded-md cursor-pointer bg-red-600 hover:bg-red-700 transition-colors duration-200"
         >
-          <FaDoorOpen className="text-xl mr-2.5" />
-          {expanded && "Logout"}
+          <FaDoorOpen className="text-xl" />
+          {expanded && <span className="text-base font-medium">Logout</span>}
         </div>
       </div>
 
       {/* Content Section (Shifts Right) */}
       <div
-        className={`flex-1 transition-all duration-300 ease-in-out p-5 overflow-x-hidden w-full ${
-          expanded ? "ml-[250px]" : "ml-20"
+        className={`flex-1 transition-all duration-300 ease-in-out p-5 bg-gray-100 w-full ${
+          expanded ? "md:ml-64 ml-20" : "ml-20"
         }`}
       >
         {children}

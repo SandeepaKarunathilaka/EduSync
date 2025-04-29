@@ -39,14 +39,13 @@ export default function App() {
         <Route path="/user-booking" element={<UserBookingRequest />} />
         <Route path="/addbooking" element={<AddBooking/>}/>
         <Route path="/admin/booking" element={<AdminBookingManagement />} />
+        <Route path="/addroom" element={<AddRoom/>}/>
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/rooms" element={<RoomAllocation />} /> {/* User Room Booking */}
-          
-          
-         
+           
 
         </Route>
 
@@ -59,7 +58,7 @@ export default function App() {
           <Route path="/getusers" element={<DashUsers />} />
           
           
-          <Route path="/addroom" element={<AddRoom/>}/>
+          
           <Route path="/updateroom/:roomId" element={<EditRoom/>}/>
           <Route path="/booking" element={<BookingManagement />} />
           <Route path="/class-management" element={<AdminClassManagement />} />

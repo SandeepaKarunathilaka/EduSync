@@ -1,6 +1,7 @@
 // bookingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import socket from "../socket";
 
 
 export const fetchBookings = createAsyncThunk("booking/fetch", async(_, thunkAPI) => {
@@ -36,6 +37,11 @@ export const updateBookingStatus = createAsyncThunk("booking/updateStatus", asyn
     }
 });
 
+export const listenBookingUpdates = (dispatch) => {
+    socket.on("bookingStatusChanged", (data) => {
+        dispatch(updateBookingStatusSuccess(data));
+    });
+};
 
 
 
@@ -78,6 +84,15 @@ const bookingSlice = createSlice({
                     state.bookings[idx] = updated;
                 }
             });
+    },
+    reducers: {
+        updateBookingStatusSuccess: (state, action) => {
+            const { bookingId, status } = action.payload;
+            const booking = state.bookings.find((b) => b._id === bookingId);
+            if (booking) {
+                booking.status = status;
+            }
+        },
     },
 });
 
