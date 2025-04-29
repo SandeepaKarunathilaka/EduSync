@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Layout, Input, Row, Col, Button, Typography, Card, Tag, Empty, Modal, Collapse, message, Rate } from "antd";
-import { FilePdfOutlined, LockOutlined } from "@ant-design/icons";
+import { FilePdfOutlined, LockOutlined, UserOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import jsPDF from "jspdf";
 import { autoTable } from "jspdf-autotable";
@@ -104,14 +104,27 @@ const HomePage = () => {
           padding: "0 20px",
           display: "flex",
           alignItems: "center",
-          gap: "12px",
+          justifyContent: "space-between",
         }}
       >
-        <img src={logo} alt="SkillSync Logo" style={{ height: 48, width: 48 }} />
-        <Title level={3} style={{ color: "#fff", margin: 0 }}>
-          <span style={{ fontWeight: 700 }}>Skill</span>
-          <span style={{ color: "#3b82f6", fontWeight: 700 }}>Sync</span>
-        </Title>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <img src={logo} alt="SkillSync Logo" style={{ height: 48, width: 48 }} />
+          <Title level={3} style={{ color: "#fff", margin: 0 }}>
+            <span style={{ fontWeight: 700 }}>Skill</span>
+            <span style={{ color: "#3b82f6", fontWeight: 700 }}>Sync</span>
+          </Title>
+        </div>
+        <Button
+          type="primary"
+          icon={<UserOutlined />}
+          style={{
+            backgroundColor: "#3b82f6",
+            borderColor: "#3b82f6",
+            fontWeight: "bold",
+          }}
+        >
+          Login
+        </Button>
       </Header>
       {/* --- Creative Header Ends --- */}
 
@@ -310,6 +323,7 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
 
 
 
