@@ -1,12 +1,11 @@
+// ✅ booking.controller.js
 import Booking from "../models/booking.model.js";
 import Room from "../models/room.model.js";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { io } from "../index.js";
 
-// ==============================
 // ✅ Create Booking (User)
-// ==============================
 export const createBooking = async(req, res, next) => {
     try {
         const token = req.cookies.access_token;
@@ -23,7 +22,6 @@ export const createBooking = async(req, res, next) => {
         const room = await Room.findById(roomId);
         if (!room) return next(errorHandler(404, "Room not found"));
 
-        // ✅ Check for booking time conflict
         const conflict = await Booking.findOne({
             roomId,
             status: { $in: ["Pending", "Approved"] },
@@ -50,14 +48,12 @@ export const createBooking = async(req, res, next) => {
             requestedTime,
             endTime,
             reason,
-            userId: req.user.id, // ✅ FIXED
+            userId: req.user.id,
             status: "Pending",
         });
 
         const saved = await booking.save();
-        const populated = await saved
-            .populate("roomId", "name type")
-            .populate("userId", "username email");
+        const populated = await saved.populate("roomId", "name type").populate("userId", "username email");
 
         io.emit("newBookingRequest", {
             message: "New booking request submitted",
@@ -70,76 +66,7 @@ export const createBooking = async(req, res, next) => {
     }
 };
 
-// ==============================
-// ✅ Admin Creates Booking
-// ==============================
-export const createBookingAsAdmin = async(req, res, next) => {
-    try {
-        const token = req.cookies.access_token;
-        if (!token) return res.status(401).json({ message: "Unauthorized" });
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-
-        if (!req.user.isAdmin) return res.status(403).json({ message: "Admin access only" });
-
-        const { roomId, requestedTime, endTime, reason, userId } = req.body;
-        const room = await Room.findById(roomId);
-        if (!room) return next(errorHandler(404, "Room not found"));
-
-        const conflict = await Booking.findOne({
-            roomId,
-            status: { $in: ["Pending", "Approved"] },
-            requestedTime: { $lt: new Date(endTime) },
-            endTime: { $gt: new Date(requestedTime) },
-        });
-
-        if (conflict) return next(errorHandler(409, "Room already booked at that time."));
-
-        const booking = new Booking({
-            roomId,
-            requestedTime,
-            endTime,
-            reason,
-            userId,
-            status: "Approved",
-        });
-
-        const saved = await booking.save();
-        await Room.findByIdAndUpdate(roomId, { status: "Occupied" });
-
-        res.status(201).json({ message: "Booking created by admin", booking: saved });
-    } catch (err) {
-        next(errorHandler(500, "Admin booking failed"));
-    }
-};
-
-// ==============================
-// ✅ Get All Bookings (Admin Only)
-// ==============================
-export const getBookings = async(req, res, next) => {
-    try {
-        const token = req.cookies.access_token;
-        if (!token) return res.status(401).json({ message: "Unauthorized" });
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-
-        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
-
-        const bookings = await Booking.find()
-            .populate("roomId", "name type capacity resources status")
-            .populate("userId", "username email");
-
-        res.status(200).json(bookings);
-    } catch (error) {
-        next(errorHandler(500, "Error fetching bookings"));
-    }
-};
-
-// ==============================
-// ✅ Update Booking Status (Admin)
-// ==============================
+// ✅ Admin Updates Booking Status
 export const updateBookingStatus = async(req, res, next) => {
     const { bookingId } = req.params;
     const { status } = req.body;
@@ -153,10 +80,7 @@ export const updateBookingStatus = async(req, res, next) => {
 
         if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
 
-        const booking = await Booking.findById(bookingId)
-            .populate("roomId", "name type")
-            .populate("userId", "username email");
-
+        const booking = await Booking.findById(bookingId).populate("roomId").populate("userId");
         if (!booking) return next(errorHandler(404, "Booking not found"));
 
         if (status === "Approved") {
@@ -167,10 +91,7 @@ export const updateBookingStatus = async(req, res, next) => {
                 requestedTime: { $lt: booking.endTime },
                 endTime: { $gt: booking.requestedTime },
             });
-
-            if (conflict) {
-                return next(errorHandler(409, "Room already occupied during this time."));
-            }
+            if (conflict) return next(errorHandler(409, "Room already occupied during this time."));
         }
 
         booking.status = status;
@@ -186,5 +107,23 @@ export const updateBookingStatus = async(req, res, next) => {
         res.status(200).json({ message: "Booking status updated", booking });
     } catch (error) {
         next(errorHandler(500, "Error updating booking"));
+    }
+};
+
+// ✅ Get All Bookings (Admin Only)
+export const getBookings = async(req, res, next) => {
+    try {
+        const token = req.cookies.access_token;
+        if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+
+        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
+
+        const bookings = await Booking.find().populate("roomId", "name type capacity").populate("userId", "username email");
+        res.status(200).json(bookings);
+    } catch (error) {
+        next(errorHandler(500, "Error fetching bookings"));
     }
 };

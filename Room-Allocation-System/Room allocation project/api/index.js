@@ -21,17 +21,21 @@ dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-// Create HTTP server and attach Socket.IO
+// ✅ Create HTTP server and attach Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow frontend to connect
+        origin: "http://localhost:5173", // ✅ Allow your frontend only
         methods: ["GET", "POST", "PUT", "DELETE"],
-    },
+        credentials: true // ✅ Allow cookies in WebSocket
+    }
 });
 
-// Middleware Setup
-app.use(cors({ origin: true, credentials: true }));
+// ✅ Middleware Setup
+app.use(cors({
+    origin: "http://localhost:5173", // ✅ Your frontend's origin
+    credentials: true // ✅ Allow sending cookies
+}));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "client", "dist")));
@@ -135,7 +139,6 @@ io.on("connection", (socket) => {
         io.emit("classScheduleUpdate", classSchedule);
     });
 
-    // Disconnect
     socket.on("disconnect", () => {
         console.log(`❌ Client disconnected: ${socket.id}`);
         clearInterval(intervalId);
