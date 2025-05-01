@@ -4,58 +4,63 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import path from "path";
 import cors from "cors";
-import http from "http"; // For WebSockets
-import { Server } from "socket.io"; // For Real-Time Features
+import http from "http";
+import { Server } from "socket.io";
 
-// Route Imports
+// Core app routes
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import roomRoutes from "./routes/room.routes.js";
 import bookingRoutes from "./routes/booking.route.js";
 
+// Course Management routes
+import courseRoutes from "./routes/course.route.js";
+//import chapterRoutes from "./modules/chapter/route.js";
+//import lectureRoutes from "./modules/lecture/route.js";
+//import enrollmentRoutes from "./modules/enrollment/route.js";
+
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
 
-// ✅ Create HTTP server and attach Socket.IO
+// Create HTTP server
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "http://localhost:5173", // ✅ Allow your frontend only
+        origin: "http://localhost:5173",
         methods: ["GET", "POST", "PUT", "DELETE"],
-        credentials: true // ✅ Allow cookies in WebSocket
+        credentials: true
     }
 });
 
-// ✅ Middleware Setup
+// Middleware
 app.use(cors({
-    origin: "http://localhost:5173", // ✅ Your frontend's origin
-    credentials: true // ✅ Allow sending cookies
+    origin: "http://localhost:5173",
+    credentials: true
 }));
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "client", "dist")));
 
-// ============================
-// ✅ MongoDB Connection
-// ============================
+// MongoDB Connection (use existing env config)
 mongoose
     .connect(process.env.MONGO)
     .then(() => console.log("✅ Connected to MongoDB"))
     .catch((err) => console.error("❌ MongoDB Connection Error:", err));
 
-// ============================
-// ✅ API Routes
-// ============================
+// App Routes
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/rooms", roomRoutes);
 app.use("/api/bookings", bookingRoutes);
 
-// ============================
-// ✅ WebSocket: Real-time Updates
-// ============================
+// Course Management Routes (merged)
+app.use("/api/courses", courseRoutes);
+//app.use("/api/chapters", chapterRoutes);
+//app.use("/api/lectures", lectureRoutes);
+//app.use("/api/enrollments", enrollmentRoutes);
 
+// WebSocket Real-Time Dashboard Data
 let totalUsers = 7;
 let totalRooms = 10;
 let bookedRooms = 4;
@@ -91,7 +96,6 @@ let classSchedule = [{
 io.on("connection", (socket) => {
     console.log(`🔌 Client connected: ${socket.id}`);
 
-    // Initial emit
     socket.emit("academicDashboardData", {
         totalUsers,
         totalRooms,
@@ -104,7 +108,6 @@ io.on("connection", (socket) => {
 
     socket.emit("classScheduleUpdate", classSchedule);
 
-    // Periodic Updates
     const intervalId = setInterval(() => {
         bookedRooms = Math.floor(Math.random() * totalRooms);
         availableRooms = totalRooms - bookedRooms;
@@ -121,7 +124,6 @@ io.on("connection", (socket) => {
         });
     }, 10000);
 
-    // Handle new class
     socket.on("addClass", (newClass) => {
         const { room, time, status } = newClass;
         const existing = classSchedule.find((r) => r.room === room);
@@ -141,24 +143,18 @@ io.on("connection", (socket) => {
     });
 });
 
-// ============================
-// ✅ Global Error Handler
-// ============================
+// Global Error Handler
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
     const message = err.message || "Internal Server Error";
     res.status(statusCode).json({ success: false, message, statusCode });
 });
 
-// ============================
-// ✅ Start Server
-// ============================
+// Start Server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-// ============================
-// ✅ Export io for controller use
-// ============================
+// Export socket.io instance
 export { io };
