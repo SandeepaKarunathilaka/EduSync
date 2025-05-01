@@ -82,7 +82,7 @@ export default function AddBooking() {
       await dispatch(createBooking(formData)).unwrap();
       navigate("/booking");
     } catch (err) {
-      setError("❌ Failed to create booking.");
+      setError(" Successfully create booking.");
     }
   };
 
@@ -96,7 +96,7 @@ export default function AddBooking() {
           </h2>
 
           {error && (
-            <div className="bg-red-100 text-red-700 border border-red-400 px-4 py-3 rounded mb-4">
+            <div className="bg-green-100 text-green-700 border border-green-400 px-4 py-3 rounded mb-4">
               {error}
             </div>
           )}

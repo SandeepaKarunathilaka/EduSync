@@ -1,6 +1,4 @@
-// ===============================
 // ✅ booking.route.js - Routes for Booking Management
-// ===============================
 
 import express from "express";
 import { verifyToken } from "../utils/verifyUser.js";

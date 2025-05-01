@@ -1,13 +1,12 @@
-// bookingSlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import socket from "../socket";
 
-
+// ✅ Fetch All Bookings (Admin or Authenticated User)
 export const fetchBookings = createAsyncThunk("booking/fetch", async(_, thunkAPI) => {
     try {
         const res = await axios.get("http://localhost:3000/api/bookings", {
-            withCredentials: true, // ✅ VERY IMPORTANT: send cookies
+            withCredentials: true, // Required for cookies
         });
         return res.data;
     } catch (err) {
@@ -15,35 +14,36 @@ export const fetchBookings = createAsyncThunk("booking/fetch", async(_, thunkAPI
     }
 });
 
-// ✅ Create booking (user)
+// ✅ Create Booking (User)
 export const createBooking = createAsyncThunk("booking/create", async(bookingData, thunkAPI) => {
     try {
-        const res = await axios.post("/api/bookings/create", bookingData, {
+        const res = await axios.post("http://localhost:3000/api/bookings/create", bookingData, {
             withCredentials: true,
         });
-        return res.data.booking; // We return the booking object only
+        return res.data.booking;
     } catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.message || "Fetch failed");
+        return thunkAPI.rejectWithValue(err.response.data.message || "Create failed");
     }
 });
 
-// ✅ Update booking status (admin)
+// ✅ Update Booking Status (Admin)
 export const updateBookingStatus = createAsyncThunk("booking/updateStatus", async({ bookingId, status }, thunkAPI) => {
     try {
-        const res = await axios.put(`/api/bookings/${bookingId}`, { status }, { withCredentials: true });
+        const res = await axios.put(`http://localhost:3000/api/bookings/${bookingId}`, { status }, {
+            withCredentials: true,
+        });
         return res.data.booking;
     } catch (err) {
         return thunkAPI.rejectWithValue(err.response.data.message || "Failed to update booking");
     }
 });
 
+// ✅ Listen for Socket Updates
 export const listenBookingUpdates = (dispatch) => {
     socket.on("bookingStatusChanged", (data) => {
         dispatch(updateBookingStatusSuccess(data));
     });
 };
-
-
 
 const bookingSlice = createSlice({
     name: "booking",
@@ -52,11 +52,20 @@ const bookingSlice = createSlice({
         loading: false,
         error: null,
     },
-    reducers: {},
+    reducers: {
+        updateBookingStatusSuccess: (state, action) => {
+            const { bookingId, status } = action.payload;
+            const booking = state.bookings.find((b) => b._id === bookingId);
+            if (booking) {
+                booking.status = status;
+            }
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchBookings.pending, (state) => {
                 state.loading = true;
+                state.error = null;
             })
             .addCase(fetchBookings.fulfilled, (state, action) => {
                 state.loading = false;
@@ -85,15 +94,8 @@ const bookingSlice = createSlice({
                 }
             });
     },
-    reducers: {
-        updateBookingStatusSuccess: (state, action) => {
-            const { bookingId, status } = action.payload;
-            const booking = state.bookings.find((b) => b._id === bookingId);
-            if (booking) {
-                booking.status = status;
-            }
-        },
-    },
 });
 
+// ✅ Export the reducer and action
+export const { updateBookingStatusSuccess } = bookingSlice.actions;
 export default bookingSlice.reducer;

@@ -10,6 +10,7 @@ import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import axios from "axios";
+import socket from "./socket";
 
 
 
@@ -24,6 +25,7 @@ import AddBooking from "./pages/AddBooking";
 import AdminBookingManagement from "./pages/AdminBookingManagement";
 import AcademicDashboard from "./pages/AcademicDashboard";
 import AdminClassManagement from "./pages/AdminClassManagement";
+import ClassSchedule from "./pages/ClassSchedule";
 
 export default function App() {
   axios.defaults.withCredentials = true;
@@ -38,8 +40,9 @@ export default function App() {
         <Route path="/academic-dashboard" element={<AcademicDashboard />} />
         <Route path="/user-booking" element={<UserBookingRequest />} />
         <Route path="/addbooking" element={<AddBooking/>}/>
-        <Route path="/admin/booking" element={<AdminBookingManagement />} />
+        
         <Route path="/addroom" element={<AddRoom/>}/>
+        <Route path="/schedules" element={<ClassSchedule />} />
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
@@ -53,7 +56,7 @@ export default function App() {
         <Route element={<OnlyAdminPrivateRoute />}>
           <Route path="/dashboard" element={<AdminHome />} />
           <Route path="/admin/rooms" element={<AdminRoomManagement />} />
-          
+          <Route path="/admin/booking" element={<AdminBookingManagement />} />
           
           <Route path="/getusers" element={<DashUsers />} />
           

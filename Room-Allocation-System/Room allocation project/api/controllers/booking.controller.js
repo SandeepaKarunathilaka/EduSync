@@ -1,11 +1,12 @@
-// ✅ booking.controller.js
+// Filename: controllers/booking.controller.js
+
 import Booking from "../models/booking.model.js";
 import Room from "../models/room.model.js";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { io } from "../index.js";
 
-// ✅ Create Booking (User)
+// Create Booking
 export const createBooking = async(req, res, next) => {
     try {
         const token = req.cookies.access_token;
@@ -55,10 +56,7 @@ export const createBooking = async(req, res, next) => {
         const saved = await booking.save();
         const populated = await saved.populate("roomId", "name type").populate("userId", "username email");
 
-        io.emit("newBookingRequest", {
-            message: "New booking request submitted",
-            booking: populated,
-        });
+        io.emit("newBookingRequest", { message: "New booking request submitted", booking: populated });
 
         res.status(201).json({ message: "Booking request created", booking: saved });
     } catch (err) {
@@ -66,7 +64,7 @@ export const createBooking = async(req, res, next) => {
     }
 };
 
-// ✅ Admin Updates Booking Status
+// Update Booking Status (Admin)
 export const updateBookingStatus = async(req, res, next) => {
     const { bookingId } = req.params;
     const { status } = req.body;
@@ -91,26 +89,27 @@ export const updateBookingStatus = async(req, res, next) => {
                 requestedTime: { $lt: booking.endTime },
                 endTime: { $gt: booking.requestedTime },
             });
+
             if (conflict) return next(errorHandler(409, "Room already occupied during this time."));
         }
 
         booking.status = status;
-        await booking.save();
+        const updated = await booking.save();
 
         io.emit("bookingStatusChanged", {
-            bookingId: booking._id.toString(),
-            status: booking.status,
-            userId: booking.userId._id.toString(),
-            roomName: booking.roomId.name,
+            bookingId: updated._id.toString(),
+            status: updated.status,
+            userId: updated.userId._id.toString(),
+            roomName: updated.roomId.name || "N/A",
         });
 
-        res.status(200).json({ message: "Booking status updated", booking });
+        res.status(200).json({ message: "Booking status updated", booking: updated });
     } catch (error) {
         next(errorHandler(500, "Error updating booking"));
     }
 };
 
-// ✅ Get All Bookings (Admin Only)
+// Get All Bookings (Admin)
 export const getBookings = async(req, res, next) => {
     try {
         const token = req.cookies.access_token;
@@ -121,9 +120,34 @@ export const getBookings = async(req, res, next) => {
 
         if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
 
-        const bookings = await Booking.find().populate("roomId", "name type capacity").populate("userId", "username email");
+        const bookings = await Booking.find()
+            .populate("roomId", "name type capacity")
+            .populate("userId", "username email");
+
         res.status(200).json(bookings);
     } catch (error) {
         next(errorHandler(500, "Error fetching bookings"));
+    }
+};
+
+// Delete Booking (Admin)
+export const deleteBooking = async(req, res, next) => {
+    const { bookingId } = req.params;
+
+    try {
+        const token = req.cookies.access_token;
+        if (!token) return res.status(401).json({ message: "Unauthorized" });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded;
+
+        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
+
+        const deleted = await Booking.findByIdAndDelete(bookingId);
+        if (!deleted) return next(errorHandler(404, "Booking not found"));
+
+        res.status(200).json({ message: "Booking deleted", booking: deleted });
+    } catch (error) {
+        next(errorHandler(500, "Error deleting booking"));
     }
 };
