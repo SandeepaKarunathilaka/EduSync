@@ -26,6 +26,7 @@ import AdminBookingManagement from "./pages/AdminBookingManagement";
 import AcademicDashboard from "./pages/AcademicDashboard";
 import AdminClassManagement from "./pages/AdminClassManagement";
 import ClassSchedule from "./pages/ClassSchedule";
+import HomeHeader from "./components/HomeHeader";
 
 export default function App() {
   axios.defaults.withCredentials = true;
@@ -40,6 +41,8 @@ export default function App() {
         <Route path="/academic-dashboard" element={<AcademicDashboard />} />
         <Route path="/user-booking" element={<UserBookingRequest />} />
         <Route path="/addbooking" element={<AddBooking/>}/>
+        <Route path="/header" element={<Header />} />
+        <Route path="/home-header" element={<HomeHeader />} />
         
         <Route path="/addroom" element={<AddRoom/>}/>
         <Route path="/schedules" element={<ClassSchedule />} />

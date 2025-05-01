@@ -6,6 +6,8 @@ import { FaDoorOpen, FaClock, FaCheckCircle, FaCalendarAlt } from "react-icons/f
 import { PieChart, Pie, Cell, Tooltip, Legend, BarChart, XAxis, YAxis, CartesianGrid, Bar } from "recharts";
 import { Link } from "react-router-dom";
 
+import AdminMainHeader from "../components/MainHeader";
+
 export default function AdminDashboard() {
   const dispatch = useDispatch();
   const { rooms } = useSelector((state) => state.room);

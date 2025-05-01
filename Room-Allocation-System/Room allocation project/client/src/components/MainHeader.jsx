@@ -32,7 +32,7 @@ export default function Header() {
       <div className="container mx-auto px-4 flex items-center justify-between h-16">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img src={LogoImage} alt="PTI Logo" className="w-12 h-auto rounded-md mr-2" />
+          <img src={LogoImage} alt="Edu Sync" className="w-12 h-auto rounded-md mr-2" />
         </Link>
 
         {/* Hamburger button */}
@@ -57,13 +57,13 @@ export default function Header() {
         </button>
 
         {/* Main Nav Links */}
-        <div className={`flex-col md:flex md:flex-row md:items-center md:space-x-8 ${menuOpen ? "flex" : "hidden"} absolute md:static top-16 left-0 w-full md:w-auto bg-blue-100 md:bg-transparent p-4 md:p-0 z-50`}>
+        {/* <div className={`flex-col md:flex md:flex-row md:items-center md:space-x-8 ${menuOpen ? "flex" : "hidden"} absolute md:static top-16 left-0 w-full md:w-auto bg-blue-100 md:bg-transparent p-4 md:p-0 z-50`}>
           <Link to="/" className="text-gray-700 font-semibold hover:text-blue-600 py-2">Home</Link>
           <a href="https://pti-shop-360.onrender.com" className="text-gray-700 font-semibold hover:text-blue-600 py-2">Shop</a>
           <a href="#features" className="text-gray-700 font-semibold hover:text-blue-600 py-2">Features</a>
           <Link to="/create-feedback" className="text-gray-700 font-semibold hover:text-blue-600 py-2">Contact Us</Link>
           <a href="#about" className="text-gray-700 font-semibold hover:text-blue-600 py-2">About Us</a>
-        </div>
+        </div> */}
 
         {/* Profile/Login Section */}
         <div className="flex items-center gap-4">

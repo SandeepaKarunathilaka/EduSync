@@ -1,87 +1,156 @@
-import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { signOut } from "../redux/user/userSlice";
-import LogoImage from "../images/pti.jpg"; // Logo
-import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaUser,
+  FaCaretDown,
+  FaSignOutAlt,
+  FaBars,
+  FaHome, // Added for navItems
+  FaCalendarAlt, // Added for navItems
+  FaBook, // Added for navItems
+  FaChartBar, // Added for navItems
+} from "react-icons/fa";
 
 export default function Header() {
-  const path = useLocation().pathname;
+  const { pathname } = useLocation();
   const { currentUser } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const profileRef = useRef(null);
+
+  const navItems = [
+    { name: "Dashboard", path: "/academic-dashboard", icon: <FaHome /> },
+    { name: "Rooms", path: "/rooms", icon: <FaCalendarAlt /> },
+    { name: "Bookings", path: "/booking", icon: <FaBook /> },
+    { name: "Class Schedules", path: "/schedules", icon: <FaCalendarAlt /> },
+   
+  ];
 
   const handleSignOut = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
-        method: "POST",
-      });
+      const res = await fetch("/api/user/signout", { method: "POST" });
       const data = await res.json();
       if (!res.ok) {
-        console.log(data.message);
+        console.error(data.message);
       } else {
         dispatch(signOut());
       }
-    } catch (error) {
-      console.log(error.message);
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
+  // Close dropdown if clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <nav className="bg-[#071445] shadow-md p-4 flex items-center justify-between">
-      {/* Logo + Title */}
-      <div className="flex items-center gap-3">
-        <img src={LogoImage} alt="Logo" className="w-10 h-10 rounded-full" />
-        <Link to={currentUser?.isAdmin ? "/dashboard" : "/"} className="text-white text-xl font-bold">
-          {currentUser?.isAdmin ? "Admin Home" : "Home"}
-        </Link>
-      </div>
-
-      {/* Center Links */}
-      <ul className="hidden md:flex gap-8 text-white font-semibold text-lg">
-        <li>
-          <Link to="/about" className={`hover:text-gray-300 ${path === "/about" ? "underline" : ""}`}>
-            About
-          </Link>
-        </li>
-        <li>
-          <Link to="/contact" className={`hover:text-gray-300 ${path === "/contact" ? "underline" : ""}`}>
-            Contact
-          </Link>
-        </li>
-      </ul>
-
-      {/* User Menu */}
-      <div className="relative">
-        {currentUser ? (
-          <div className="group inline-block">
-            <button className="flex items-center space-x-2 focus:outline-none">
-              <img
-                src={currentUser.profilePicture || "https://via.placeholder.com/50"}
-                alt="Profile"
-                className="w-10 h-10 rounded-full object-cover border-2 border-white"
-              />
-            </button>
-
-            {/* Dropdown */}
-            <div className="absolute right-0 mt-2 hidden group-hover:block bg-white rounded-lg shadow-md py-2 w-48 text-center z-50">
-              <div className="px-4 py-2 text-gray-700 font-semibold flex items-center justify-center gap-2">
-                <FaUserCircle /> @{currentUser.username}
-              </div>
-              <div className="px-4 py-1 text-gray-500 text-sm">{currentUser.email}</div>
-              <hr className="my-2" />
-              <button
-                onClick={handleSignOut}
-                className="w-full text-red-600 hover:bg-red-100 py-2 flex items-center justify-center gap-2"
+    <nav className="bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-md z-50 relative">
+      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+        {/* Left: Back + Logo/Title */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            <FaArrowLeft className="text-lg" />
+          </button>
+          <button
+            className="md:hidden block text-white text-xl"
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          >
+            <FaBars />
+          </button>
+          <div className="hidden md:flex items-center gap-4">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                className={`flex items-center gap-2 font-medium transition-colors duration-200 ${
+                  pathname === item.path
+                    ? "text-yellow-400 underline"
+                    : "text-gray-200 hover:text-white"
+                }`}
               >
-                <FaSignOutAlt /> Sign Out
+                <span className="text-lg">{item.icon}</span>
+                <span>{item.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
+        {/* Right: Profile */}
+        <div ref={profileRef} className="relative">
+          <button
+            onClick={() => setIsProfileOpen((prev) => !prev)}
+            className="flex items-center gap-2 text-gray-200 hover:text-white transition duration-200"
+          >
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
+              <FaUser />
+            </div>
+            <FaCaretDown className="text-sm" />
+          </button>
+          {isProfileOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2 z-50 animate-fade-in">
+              <Link
+                to="/profile"
+                className="block px-4 py-2 hover:bg-gray-100"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                View Profile
+              </Link>
+              <Link
+                to="/settings"
+                className="block px-4 py-2 hover:bg-gray-100"
+                onClick={() => setIsProfileOpen(false)}
+              >
+                Settings
+              </Link>
+              <button 
+                onClick={() => {
+                  setIsProfileOpen(false);
+                  handleSignOut();
+                }}
+                className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 flex items-center gap-2"
+              >
+                <FaSignOutAlt /> Logout
               </button>
             </div>
-          </div>
-        ) : (
-          <Link to="/sign-in" className="text-white font-semibold border px-4 py-2 rounded-md hover:bg-white hover:text-[#071445] transition">
-            Sign In
-          </Link>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {isMobileMenuOpen && (
+        <div className="bg-gray-800 text-white px-4 pb-4 space-y-2 md:hidden">
+          {navItems.map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`block py-2 border-b border-gray-700 flex items-center gap-2 ${
+                pathname === item.path ? "text-yellow-400" : "hover:text-white"
+              }`}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <span className="text-lg">{item.icon}</span>
+              <span>{item.name}</span>
+            </Link>
+          ))}
+        </div>
+      )}
     </nav>
   );
 }

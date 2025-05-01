@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaHome, FaBook, FaCalendarAlt, FaChartBar, FaDoorOpen, FaBars, FaTimes, FaUser } from "react-icons/fa";
+import LogoImage from "../images/pti.jpg";
 
 export default function Sidebar() {
   const navigate = useNavigate();
@@ -14,23 +15,32 @@ export default function Sidebar() {
 
   // Sidebar Menu Items (adjusted to match the image)
   const menuItems = [
-    { name: "Profile", icon: <FaUser />, path: "/profile" },
+    
     { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
     { name: "Room Management", icon: <FaBook />, path: "/rooms" },
     { name: "Booking Management", icon: <FaCalendarAlt />, path: "/booking" },
     { name: "Class Schedules", icon: <FaCalendarAlt />, path: "/schedules" },
-    { name: "Reports & Analytics", icon: <FaChartBar />, path: "/reports" },
+    { name: "Profile", icon: <FaUser />, path: "/profile" },
   ];
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 h-screen bg-gray-800 text-gray-100 flex flex-col p-2.5 shadow-[2px_0_5px_rgba(0,0,0,0.2)] transition-all duration-300 ease-in-out z-50 ${
+      className={`fixed inset-y-10 left-0 h-screen bg-gray-800 text-gray-100 flex flex-col p-2.5 shadow-[2px_0_5px_rgba(0,0,0,0.2)] transition-all duration-300 ease-in-out z-50 ${
         expanded ? "w-64" : "w-20"
       }`}
     >
-      {/* Toggle Button */}
+      {/* Header with Logo and Toggle Button */}
       <div className="flex items-center justify-between p-2.5">
-        {expanded && <h2 className="text-xl font-bold">EduSync</h2>}
+        <div className="flex items-center gap-2">
+          <img
+            src={LogoImage}
+            alt="Logo"
+            className={`${
+              expanded ? "w-10 h-10" : "w-8 h-8"
+            } rounded-full object-cover transition-all duration-300`}
+          />
+          {expanded && <h2 className="text-xl font-bold text-white">EduSync</h2>}
+        </div>
         <button
           onClick={toggleSidebar}
           className="bg-transparent border-none text-gray-100 text-xl cursor-pointer hover:bg-gray-700 p-2 rounded-full transition-colors duration-200"
@@ -70,7 +80,7 @@ export default function Sidebar() {
       {/* Logout Button */}
       <div
         onClick={() => navigate("/sign-in")}
-        className="flex items-center gap-2.5 p-3 mx-2 mb-2 rounded-md cursor-pointer bg-red-600 hover:bg-red-700 transition-colors duration-200"
+        className="flex items-center gap-2.5 p-3 mx-5 mb-10 rounded-md cursor-pointer bg-red-600 hover:bg-red-700 transition-colors duration-200"
       >
         <FaDoorOpen className="text-xl" />
         {expanded && <span className="text-base font-medium">Logout</span>}

@@ -19,6 +19,7 @@
     "firebase": "^11.6.1",
     "flowbite-react": "^0.10.1",
     "js-cookie": "^3.0.5",
+    "jspdf": "^3.0.1",
     "react": "^19.1.0",
     "react-calendar": "^5.1.0",
     "react-datepicker": "^8.3.0",

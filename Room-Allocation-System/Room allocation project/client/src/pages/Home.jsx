@@ -1,8 +1,19 @@
 import { Sidebar } from "flowbite-react";
-import { HiUser, HiArrowSmRight, HiDatabase } from "react-icons/hi";
+import {
+  HiUser,
+  HiArrowRight,
+  HiDatabase,
+  HiBookOpen,
+  HiAcademicCap,
+  HiClipboardList,
+  HiCalendar,
+  HiOfficeBuilding,
+} from "react-icons/hi"; // ✅ use valid icons
+
 import { Link, useLocation } from "react-router-dom";
 import { signOut } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import UserHeader from "../components/HomeHeader";
 
 export default function Home() {
   const { currentUser } = useSelector((state) => state.user);
@@ -11,90 +22,82 @@ export default function Home() {
 
   const handleSignOut = async () => {
     try {
-      await fetch('/api/auth/signout');
+      await fetch("/api/auth/signout");
       dispatch(signOut());
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
+  // ✅ Replace HiBuildingOffice → HiOfficeBuilding
+  const adminLinks = [
+    { to: "/profile", label: "Profile", icon: HiUser },
+    { to: "/", label: "Dashboard", icon: HiDatabase },
+    { to: "/courses", label: "Course & Class Management", icon: HiBookOpen },
+    { to: "/faculty", label: "Faculty & Scheduling", icon: HiAcademicCap },
+    { to: "/enrollments", label: "Student Enrollment", icon: HiClipboardList },
+    { to: "/dashboard", label: "Room & Resource Management", icon: HiOfficeBuilding },
+  ];
+
+  const studentLinks = [
+    { to: "/profile", label: "Profile", icon: HiUser },
+    { to: "/user-booking", label: "Request a Room", icon: HiClipboardList },
+    { to: "/my-bookings", label: "My Bookings", icon: HiDatabase },
+    { to: "/class-schedule", label: "Class Schedule", icon: HiCalendar },
+  ];
+
+  const roleLinks = currentUser?.isAdmin ? adminLinks : studentLinks;
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex flex-col md:flex-row min-h-full">
-        <Sidebar className="w-full md:w-64 bg-gray-200 text-gray-700">
+    <div className="min-h-screen flex flex-col">
+      <UserHeader />
+
+      <div className="flex flex-1">
+        {/* Sidebar */}
+        <Sidebar className="w-full md:w-64 bg-gradient-to-b from-gray-800 to-gray-900 text-white min-h-screen">
           <Sidebar.Items>
-            <Sidebar.ItemGroup>
-
-              <Link to="/profile">
-                <Sidebar.Item
-                  active={path === "/profile"}
-                  icon={HiUser}
-                  className="my-2 w-full rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-100"
-                >
-                  Profile
-                </Sidebar.Item>
-              </Link>
-
-              {currentUser.isAdmin && (
-                <Link to="/dashboard">
+            <Sidebar.ItemGroup className="space-y-2">
+              {roleLinks.map((link) => (
+                <Link to={link.to} key={link.label}>
                   <Sidebar.Item
-                    active={path === "/dashboard"}
-                    icon={HiDatabase}
-                    className="my-2 w-full rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-100"
+                    icon={link.icon}
+                    active={path === link.to}
+                    className="hover:bg-blue-600 transition-all duration-200"
                   >
-                    Dashboard
+                    {link.label}
                   </Sidebar.Item>
                 </Link>
-              )}
+              ))}
 
-              <Link to="/user-booking">
-                <Sidebar.Item
-                  active={path === "/user-booking"}
-                  icon={HiArrowSmRight}
-                  className="my-2 w-full rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-100"
-                >
-                  Request a Room
-                </Sidebar.Item>
-              </Link>
-
-              <Link to="/my-bookings">
-                <Sidebar.Item
-                  active={path === "/my-bookings"}
-                  icon={HiArrowSmRight}
-                  className="my-2 w-full rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-100"
-                >
-                  My Bookings
-                </Sidebar.Item>
-              </Link>
-
-              <Link to="/class-schedule">
-                <Sidebar.Item
-                  active={path === "/class-schedule"}
-                  icon={HiArrowSmRight}
-                  className="my-2 w-full rounded-lg border border-blue-500 text-blue-600 hover:bg-blue-100"
-                >
-                  Class Schedule
-                </Sidebar.Item>
-              </Link>
-
+              {/* Sign Out */}
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 my-2 w-full p-2 rounded-lg border border-red-500 text-red-600 hover:bg-red-100 transition"
+                className="flex items-center gap-2 px-4 py-2 text-red-400 hover:text-white hover:bg-red-600 transition-all rounded-lg w-full mt-2"
               >
-                <HiArrowSmRight className="text-xl" />
+                <HiArrowRight className="text-xl" />
                 Sign Out
               </button>
-
             </Sidebar.ItemGroup>
           </Sidebar.Items>
         </Sidebar>
-      </div>
 
-      {currentUser.isAdmin && (
-        <div className="text-center mt-6">
-          <h1 className="text-blue-600 text-3xl font-bold">Welcome Admin</h1>
-        </div>
-      )}
+        {/* Main Body */}
+        <main className="flex-1 p-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            {currentUser?.isAdmin ? (
+              <h1 className="text-3xl font-bold text-blue-700 mb-4">Welcome Admin 👨‍💼</h1>
+            ) : (
+              <h1 className="text-3xl font-bold text-green-700 mb-4">Welcome Student 🎓</h1>
+            )}
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <p className="text-gray-600">
+                Please select an option from the sidebar to begin.
+              </p>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

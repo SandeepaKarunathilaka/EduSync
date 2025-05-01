@@ -32,7 +32,7 @@ export default function SignIn() {
       }
       dispatch(signInSuccess(data));
       if (data.isAdmin) {
-        navigate('/dashboard');
+        navigate('/');
       } else {
         navigate('/');
       }

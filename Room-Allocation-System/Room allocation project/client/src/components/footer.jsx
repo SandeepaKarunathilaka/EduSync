@@ -1,54 +1,55 @@
-import React from "react";
+
+import React, { useState, useEffect, useRef } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
+
+import '../css/home.css'
 
 export default function Footer() {
   return (
-    <div className="bg-blue-100 mt-10">
-      <section className="py-10">
-        <div className="container mx-auto flex flex-col md:flex-row justify-center gap-10 px-6">
-          {/* Logo and About */}
-          <div className="flex flex-col gap-4 items-center md:items-start">
-            <div className="w-16 h-16 bg-gray-400 rounded-full"></div> {/* Placeholder for footer logo */}
-            <div className="text-gray-600 text-center md:text-left">
-              Lorem ipsum dolor sit amet,<br /> consectetur adipiscing elit.
+    <div className="footer">
+      <section className="footer pti-bg-light_blue">
+        <div className="container d-flex gap-5 justify-content-center pt-5">
+            <div className="d-flex flex-column gap-2">
+                <div className="footer-logo"></div>
+                <div className="footer-test pti-text-p">Lorem ipsum dolor sit amet, <br /> consectetur adipiscing elit. </div>
+                <div className="d-flex gap-4">
+                  <div><i className="fa-brands fa-facebook" ></i></div>
+                  <div><i className="fa-brands fa-instagram" ></i></div>
+                  <div><i className="fa-brands fa-twitter" ></i></div>
+                  <div><i className="fa-brands fa-linkedin" ></i></div>
+                </div>
             </div>
-            <div className="flex gap-4 text-gray-600 text-2xl">
-              <i className="fa-brands fa-facebook"></i>
-              <i className="fa-brands fa-instagram"></i>
-              <i className="fa-brands fa-twitter"></i>
-              <i className="fa-brands fa-linkedin"></i>
+            <div>
+              <div>
+                <ol className="pti-footer-ol">
+                  <li className="pti-text-h3 pti-bold">Our catergorize</li>
+                  <li className="pti-text-p pt-2">Factory Uniforms</li>
+                  <li className="pti-text-p">School Uniforms</li>
+                  <li className="pti-text-p">Military Uniforms</li>
+                  <li className="pti-text-p">Military Uniforms</li>
+                  <li className="pti-text-p">Towels</li>
+                </ol>
+              </div>
             </div>
-          </div>
-
-          {/* Our Categories */}
-          <div>
-            <ul className="space-y-2 text-center md:text-left">
-              <li className="text-lg font-bold text-gray-700">Our Categories</li>
-              <li className="text-gray-600 pt-2">Factory Uniforms</li>
-              <li className="text-gray-600">School Uniforms</li>
-              <li className="text-gray-600">Military Uniforms</li>
-              <li className="text-gray-600">Military Uniforms</li>
-              <li className="text-gray-600">Towels</li>
-            </ul>
-          </div>
-
-          {/* Our Services */}
-          <div>
-            <ul className="space-y-2 text-center md:text-left">
-              <li className="text-lg font-bold text-gray-700">Our Services</li>
-              <li className="text-gray-600 pt-2">Online Marketplace</li>
-              <li className="text-gray-600">Free Delivery</li>
-              <li className="text-gray-600">Packaging</li>
-            </ul>
-          </div>
-
-          {/* Contact Us */}
-          <div>
-            <ul className="space-y-2 text-center md:text-left">
-              <li className="text-lg font-bold text-gray-700">Contact Us</li>
-              <li className="text-gray-600 pt-2">info@pti.com</li>
-              <li className="text-gray-600">No 623, Piliyandala Road, Katubedda</li>
-            </ul>
-          </div>
+            <div>
+            <div>
+                <ol className="pti-footer-ol">
+                  <li className="pti-text-h3 pti-bold">Our Services</li>
+                  <li className="pti-text-p pt-2">Online Marketplace</li>
+                  <li className="pti-text-p">Free Delivery</li>
+                  <li className="pti-text-p">Packaging</li>
+                </ol>
+              </div>
+            </div>
+            <div>
+            <ol className="pti-footer-ol">
+                  <li className="pti-text-h3 pti-bold">Contact Us</li>
+                  <li className="pti-text-p pt-2">info@pti.com</li>
+                  <li className="pti-text-p">No 623, Piliyandala Road, Katubedda</li>
+                </ol>
+            </div>
         </div>
       </section>
     </div>

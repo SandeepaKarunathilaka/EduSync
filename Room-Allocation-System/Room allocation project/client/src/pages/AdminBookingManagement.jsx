@@ -1,5 +1,3 @@
-// Filename: src/pages/AdminBookingManagement.jsx
-
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchBookings, updateBookingStatus } from "../redux/bookingSlice";
@@ -8,6 +6,8 @@ import { toast } from "react-toastify";
 import { io } from "socket.io-client";
 import AdminHeader from "../components/Header";
 import socket from "../socket";
+import { FaDownload } from "react-icons/fa"; // Added for the Download Report button
+import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
 
 export default function AdminBookingManagement() {
   const dispatch = useDispatch();
@@ -17,16 +17,9 @@ export default function AdminBookingManagement() {
     dispatch(fetchBookings());
     dispatch(fetchRooms());
 
-    // const socket = io("http://localhost:3000");
-
-    // socket.on("newBookingRequest", (data) => {
-    //   toast.info(`📅 New booking request for ${data.booking?.roomId?.name || "Unknown Room"}`);
-    //   dispatch(fetchBookings());
-    // });
-
     const socket = io("http://localhost:3000");
     socket.on("newBookingRequest", (data) => {
-      toast.info('📅 New booking request for ${data.booking.roomId?.name}');
+      toast.info(`📅 New booking request for ${data.booking.roomId?.name}`);
       dispatch(fetchBookings());
     });
 
@@ -47,11 +40,76 @@ export default function AdminBookingManagement() {
     }
   };
 
+  const handleDownloadReport = () => {
+    const doc = new jsPDF();
+    
+    // Set the title
+    doc.setFontSize(18);
+    doc.text("Booking Requests Report", 14, 22);
+
+    // Set the generation date
+    doc.setFontSize(12);
+    const today = new Date().toLocaleDateString();
+    doc.text(`Generated on: ${today}`, 14, 32);
+
+    // Define table headers
+    const headers = ["Room", "Requested Time", "End Time", "Reason", "Status", "Action"];
+    const columnWidths = [30, 40, 40, 40, 20, 20]; // Widths for each column
+    let rowHeight = 40; // Starting Y position after the title and date
+
+    // Add table headers
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    headers.forEach((header, index) => {
+      const xPosition = 14 + headers.slice(0, index).reduce((sum, _, i) => sum + columnWidths[i], 0);
+      doc.text(header, xPosition, rowHeight);
+    });
+
+    // Add a line under the headers
+    doc.setLineWidth(0.5);
+    doc.line(14, rowHeight + 2, 196, rowHeight + 2);
+
+    // Add table rows
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    bookings.forEach((booking) => {
+      rowHeight += 8; // Increment Y position for each row
+      const rowData = [
+        booking.roomId?.name || "N/A",
+        new Date(booking.requestedTime).toLocaleString(),
+        new Date(booking.endTime).toLocaleString(),
+        booking.reason,
+        booking.status,
+        "", // Placeholder for Action column (not practical to include buttons in PDF)
+      ];
+
+      rowData.forEach((cell, cellIndex) => {
+        const xPosition = 14 + headers.slice(0, cellIndex).reduce((sum, _, i) => sum + columnWidths[i], 0);
+        doc.text(cell, xPosition, rowHeight);
+      });
+
+      // Add a line under each row
+      doc.setLineWidth(0.2);
+      doc.line(14, rowHeight + 2, 196, rowHeight + 2);
+    });
+
+    // Save the PDF
+    doc.save(`Booking_Requests_${today}.pdf`);
+  };
+
   return (
     <>
       <AdminHeader />
       <div className="p-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">📋 Booking Requests</h2>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <h2 className="text-2xl font-bold text-center">📋 Booking Requests</h2>
+          <button
+            onClick={handleDownloadReport}
+            className="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition-all duration-200 shadow-md flex items-center gap-2"
+          >
+            <FaDownload /> Download Report
+          </button>
+        </div>
 
         {loading ? (
           <p className="text-center">Loading...</p>
