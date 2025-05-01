@@ -46,8 +46,8 @@ export default function Home() {
 
   const adminLinks = [
     { to: "/profile", label: "Profile", icon: { name: "HiUser" } },
-    { to: "/dashboard", label: "Dashboard", icon: { name: "HiDatabase" } },
-    { to: "/courses", label: "Course & Class Management", icon: { name: "HiBookOpen" } },
+    { to: "/", label: "Dashboard", icon: { name: "HiDatabase" } },
+    { to: "/course-dashboard", label: "Course & Class Management", icon: { name: "HiBookOpen" } },
     { to: "/faculty", label: "Faculty & Scheduling", icon: { name: "HiAcademicCap" } },
     { to: "/enrollments", label: "Student Enrollment", icon: { name: "HiClipboardList" } },
     { to: "/dashboard", label: "Room & Resource Management", icon: { name: "HiOfficeBuilding" } },

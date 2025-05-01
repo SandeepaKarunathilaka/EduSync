@@ -11,6 +11,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import axios from "axios";
 import socket from "./socket";
+import "antd/dist/reset.css";
 
 
 
@@ -27,6 +28,10 @@ import AcademicDashboard from "./pages/AcademicDashboard";
 import AdminClassManagement from "./pages/AdminClassManagement";
 import ClassSchedule from "./pages/ClassSchedule";
 import HomeHeader from "./components/HomeHeader";
+
+//sandeepa
+import HomePage from "./pages/HomePage";
+import DashboardPage from "./pages/DashboardPage";
 
 export default function App() {
   axios.defaults.withCredentials = true;
@@ -47,6 +52,10 @@ export default function App() {
         <Route path="/addroom" element={<AddRoom/>}/>
         <Route path="/schedules" element={<ClassSchedule />} />
         <Route path="/booking" element={<BookingManagement />} />
+
+{/* sandeepa */}
+        <Route element={<HomePage />} path="/homepage" />
+        <Route element={<DashboardPage />} path="/course-dashboard" />
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
