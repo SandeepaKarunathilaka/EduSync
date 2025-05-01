@@ -8,10 +8,11 @@ import {
   FaCaretDown,
   FaSignOutAlt,
   FaBars,
-  FaHome, // Added for navItems
-  FaCalendarAlt, // Added for navItems
-  FaBook, // Added for navItems
-  FaChartBar, // Added for navItems
+  FaHome,
+  FaCalendarAlt,
+  FaBook,
+  FaChartBar,
+  FaClipboardList,
 } from "react-icons/fa";
 
 export default function Header() {
@@ -24,29 +25,35 @@ export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const profileRef = useRef(null);
 
-  const navItems = [
-    { name: "Dashboard", path: "/academic-dashboard", icon: <FaHome /> },
+  const adminNav = [
+    { name: "Dashboard", path: "/dashboard", icon: <FaHome /> },
     { name: "Rooms", path: "/rooms", icon: <FaCalendarAlt /> },
     { name: "Bookings", path: "/booking", icon: <FaBook /> },
     { name: "Class Schedules", path: "/schedules", icon: <FaCalendarAlt /> },
-   
+    { name: "Reports", path: "/reports", icon: <FaChartBar /> },
   ];
+
+  const userNav = [
+    { name: "Home", path: "/", icon: <FaHome /> },
+    { name: "Request a Room", path: "/addbooking", icon: <FaClipboardList /> },
+    { name: "My Bookings", path: "/booking", icon: <FaBook /> },
+    { name: "Class Schedule", path: "/schedules", icon: <FaCalendarAlt /> },
+  ];
+
+  const navItems = currentUser?.isAdmin ? adminNav : userNav;
 
   const handleSignOut = async () => {
     try {
       const res = await fetch("/api/user/signout", { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        console.error(data.message);
-      } else {
+      if (res.ok) {
         dispatch(signOut());
+        navigate("/sign-in");
       }
     } catch (err) {
       console.error(err.message);
     }
   };
 
-  // Close dropdown if clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
@@ -60,16 +67,15 @@ export default function Header() {
   return (
     <nav className="bg-gradient-to-r from-gray-800 to-gray-900 text-white shadow-md z-50 relative">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-        {/* Left: Back + Logo/Title */}
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(-1)}
-            className="text-gray-300 hover:text-white transition-colors duration-200"
+            className="text-gray-300 hover:text-white transition-colors"
           >
             <FaArrowLeft className="text-lg" />
           </button>
           <button
-            className="md:hidden block text-white text-xl"
+            className="md:hidden text-white text-xl"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           >
             <FaBars />
@@ -79,30 +85,30 @@ export default function Header() {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`flex items-center gap-2 font-medium transition-colors duration-200 ${
+                className={`flex items-center gap-2 font-medium transition-colors ${
                   pathname === item.path
                     ? "text-yellow-400 underline"
                     : "text-gray-200 hover:text-white"
                 }`}
               >
-                <span className="text-lg">{item.icon}</span>
-                <span>{item.name}</span>
+                {item.icon}
+                {item.name}
               </Link>
             ))}
           </div>
         </div>
 
-        {/* Right: Profile */}
         <div ref={profileRef} className="relative">
           <button
             onClick={() => setIsProfileOpen((prev) => !prev)}
-            className="flex items-center gap-2 text-gray-200 hover:text-white transition duration-200"
+            className="flex items-center gap-2 text-gray-200 hover:text-white"
           >
             <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center">
               <FaUser />
             </div>
             <FaCaretDown className="text-sm" />
           </button>
+
           {isProfileOpen && (
             <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg py-2 z-50 animate-fade-in">
               <Link
@@ -119,7 +125,7 @@ export default function Header() {
               >
                 Settings
               </Link>
-              <button 
+              <button
                 onClick={() => {
                   setIsProfileOpen(false);
                   handleSignOut();
@@ -145,8 +151,8 @@ export default function Header() {
               }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              <span className="text-lg">{item.icon}</span>
-              <span>{item.name}</span>
+              {item.icon}
+              {item.name}
             </Link>
           ))}
         </div>

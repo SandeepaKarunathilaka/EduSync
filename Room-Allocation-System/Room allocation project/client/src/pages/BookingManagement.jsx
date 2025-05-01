@@ -9,26 +9,27 @@ import { Calendar } from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import {
   FaClock,
-  FaArrowLeft,
-  FaHome,
-  FaUser,
   FaBook,
   FaCalendarAlt,
   FaChartBar,
-  FaSignOutAlt,
-  FaCaretDown,
-  FaDownload, // Added for the Download Report button
+  FaDownload,
 } from "react-icons/fa";
 import AdminMainHeader from "../components/Header";
-import { jsPDF } from "jspdf"; // Import jsPDF for PDF generation
+import { jsPDF } from "jspdf";
 
 Modal.setAppElement("#root");
 
 export default function BookingManagement() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const { rooms, status: roomStatus } = useSelector((state) => state.room);
-  const { bookings } = useSelector((state) => state.booking);
+  const { bookings: allBookings } = useSelector((state) => state.booking);
+  const { currentUser } = useSelector((state) => state.user);
+
+  const bookings = currentUser?.isAdmin
+    ? allBookings
+    : allBookings.filter((b) => b.userId === currentUser?._id);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState("");
@@ -37,15 +38,7 @@ export default function BookingManagement() {
   const [filters, setFilters] = useState({ capacity: "", resources: [] });
   const [filteredRooms, setFilteredRooms] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [modalRoom, setModalRoom] = useState(null);
-
-  const navItems = [
-    { name: "Home", path: "/home", icon: <FaHome /> },
-    { name: "Bookings", path: "/booking", icon: <FaBook /> },
-    { name: "Class Schedules", path: "/schedules", icon: <FaCalendarAlt /> },
-    { name: "Reports", path: "/reports", icon: <FaChartBar /> },
-  ];
 
   useEffect(() => {
     dispatch(fetchRooms());
@@ -133,39 +126,23 @@ export default function BookingManagement() {
 
   const handleDownloadReport = () => {
     const doc = new jsPDF();
-    
-    // Set the title
     doc.setFontSize(18);
     doc.text("Booking Management Report", 14, 22);
-
-    // Set the selected date and time
     doc.setFontSize(12);
     const formattedDate = selectedDate.toLocaleDateString();
     const timeInfo = selectedTime ? `Time: ${selectedTime}` : "Time: All Day";
     doc.text(`Date: ${formattedDate}`, 14, 32);
     doc.text(timeInfo, 14, 38);
 
-    // Define table headers
-    const headers = ["Room", "Type", "Capacity", "Resources", "Status", "Actions"];
-    const columnWidths = [40, 30, 20, 60, 30, 20]; // Widths for each column
-    let rowHeight = 46; // Starting Y position after the title and date
+    const headers = ["Room", "Type", "Capacity", "Resources", "Status"];
+    let rowHeight = 46;
 
-    // Add table headers
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
     headers.forEach((header, index) => {
-      const xPosition = 14 + headers.slice(0, index).reduce((sum, _, i) => sum + columnWidths[i], 0);
-      doc.text(header, xPosition, rowHeight);
+      doc.text(header, 14 + index * 40, rowHeight);
     });
 
-    // Add a line under the headers
-    doc.setLineWidth(0.5);
-    doc.line(14, rowHeight + 2, 196, rowHeight + 2);
-
-    // Add table rows
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(8);
-    filteredRooms.forEach((room) => {
+    filteredRooms.forEach((room, i) => {
+      rowHeight += 8;
       const hasBooking = bookings.some(
         (b) =>
           b.roomId?._id === room._id &&
@@ -173,38 +150,25 @@ export default function BookingManagement() {
           new Date(b.endTime) > new Date(selectedDate) &&
           new Date(b.requestedTime) < new Date(selectedDate)
       );
-      const status = hasBooking ? "Occupied" : "Available";
-
-      rowHeight += 8; // Increment Y position for each row
       const rowData = [
         room.name,
         room.type,
         room.capacity.toString(),
         room.resources.join(", "),
-        status,
-        "View", // Placeholder for Actions column
+        hasBooking ? "Occupied" : "Available",
       ];
 
-      rowData.forEach((cell, cellIndex) => {
-        const xPosition = 14 + headers.slice(0, cellIndex).reduce((sum, _, i) => sum + columnWidths[i], 0);
-        doc.text(cell, xPosition, rowHeight);
+      rowData.forEach((text, index) => {
+        doc.text(text, 14 + index * 40, rowHeight);
       });
-
-      // Add a line under each row
-      doc.setLineWidth(0.2);
-      doc.line(14, rowHeight + 2, 196, rowHeight + 2);
     });
 
-    // Save the PDF
     doc.save(`Booking_Management_${formattedDate}.pdf`);
   };
 
-  return (
+   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-100 to-blue-50 font-sans flex flex-col">
-      {/* Navigation Bar */}
       <AdminMainHeader />
-
-      {/* Main Content */}
       <div className="flex-1 p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
@@ -213,23 +177,28 @@ export default function BookingManagement() {
             </h1>
             <div className="flex gap-3">
               <Link to="/addbooking">
-                <button className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-green-700 transition-all duration-200 shadow-md flex items-center gap-2">
-                  <span>+</span> Add Booking
+                <button className="bg-green-500 text-white px-4 py-2 rounded-lg shadow-md">
+                  + Add Booking
                 </button>
               </Link>
-              <Link to="/admin/booking">
-                <button className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-md">
-                  Manage Bookings
-                </button>
-              </Link>
-              <button
-                onClick={handleDownloadReport}
-                className="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-2 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-200 shadow-md flex items-center gap-2"
-              >
-                <FaDownload /> Download Report
-              </button>
+              {currentUser?.isAdmin && (
+                <>
+                  <Link to="/admin/booking">
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md">
+                      Manage Bookings
+                    </button>
+                  </Link>
+                  <button
+                    onClick={handleDownloadReport}
+                    className="bg-indigo-500 text-white px-4 py-2 rounded-lg shadow-md"
+                  >
+                    <FaDownload /> Download Report
+                  </button>
+                </>
+              )}
             </div>
           </div>
+
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Calendar */}

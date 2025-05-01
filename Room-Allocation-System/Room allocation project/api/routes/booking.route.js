@@ -12,21 +12,21 @@ const router = express.Router();
 
 /**
  * @route   POST /api/bookings/create
- * @desc    User creates a booking request
- * @access  Private (Authenticated Users)
+ * @desc    Any authenticated user can request a booking
+ * @access  Private
  */
 router.post("/create", verifyToken, createBooking);
 
 /**
  * @route   GET /api/bookings
- * @desc    Admin fetches all bookings
- * @access  Private (Admin only)
+ * @desc    Admins get all bookings, users get only their own
+ * @access  Private
  */
 router.get("/", verifyToken, getBookings);
 
 /**
  * @route   PUT /api/bookings/:bookingId
- * @desc    Admin updates booking status (approve/reject)
+ * @desc    Only admins can update booking status
  * @access  Private (Admin only)
  */
 router.put("/:bookingId", verifyToken, updateBookingStatus);

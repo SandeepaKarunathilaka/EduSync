@@ -46,6 +46,7 @@ export default function App() {
         
         <Route path="/addroom" element={<AddRoom/>}/>
         <Route path="/schedules" element={<ClassSchedule />} />
+        <Route path="/booking" element={<BookingManagement />} />
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>
@@ -66,7 +67,7 @@ export default function App() {
           
           
           <Route path="/updateroom/:roomId" element={<EditRoom/>}/>
-          <Route path="/booking" element={<BookingManagement />} />
+          
           <Route path="/class-management" element={<AdminClassManagement />} />
          
         </Route>

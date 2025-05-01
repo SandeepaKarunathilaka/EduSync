@@ -1,12 +1,10 @@
-// Filename: controllers/booking.controller.js
-
 import Booking from "../models/booking.model.js";
 import Room from "../models/room.model.js";
 import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { io } from "../index.js";
 
-// Create Booking
+// Create Booking (User)
 export const createBooking = async(req, res, next) => {
     try {
         const token = req.cookies.access_token;
@@ -54,11 +52,16 @@ export const createBooking = async(req, res, next) => {
         });
 
         const saved = await booking.save();
-        const populated = await saved.populate("roomId", "name type").populate("userId", "username email");
+        const populated = await saved
+            .populate("roomId", "name type")
+            .populate("userId", "username email");
 
-        io.emit("newBookingRequest", { message: "New booking request submitted", booking: populated });
+        io.emit("newBookingRequest", {
+            message: "New booking request submitted",
+            booking: populated,
+        });
 
-        res.status(201).json({ message: "Booking request created", booking: saved });
+        res.status(201).json({ message: "Booking request created", booking: populated });
     } catch (err) {
         next(errorHandler(500, "Failed to create booking"));
     }
@@ -76,7 +79,9 @@ export const updateBookingStatus = async(req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
 
-        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: "Forbidden: Admin access required" });
+        }
 
         const booking = await Booking.findById(bookingId).populate("roomId").populate("userId");
         if (!booking) return next(errorHandler(404, "Booking not found"));
@@ -109,7 +114,7 @@ export const updateBookingStatus = async(req, res, next) => {
     }
 };
 
-// Get All Bookings (Admin)
+// Get Bookings (Admin: all, User: own)
 export const getBookings = async(req, res, next) => {
     try {
         const token = req.cookies.access_token;
@@ -118,11 +123,12 @@ export const getBookings = async(req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
 
-        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
+        const filter = req.user.isAdmin ? {} : { userId: req.user.id };
 
-        const bookings = await Booking.find()
+        const bookings = await Booking.find(filter)
             .populate("roomId", "name type capacity")
-            .populate("userId", "username email");
+            .populate("userId", "username email")
+            .sort({ requestedTime: -1 });
 
         res.status(200).json(bookings);
     } catch (error) {
@@ -130,7 +136,7 @@ export const getBookings = async(req, res, next) => {
     }
 };
 
-// Delete Booking (Admin)
+// Delete Booking (Admin only)
 export const deleteBooking = async(req, res, next) => {
     const { bookingId } = req.params;
 
@@ -141,7 +147,9 @@ export const deleteBooking = async(req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
 
-        if (!req.user.isAdmin) return res.status(403).json({ message: "Forbidden: Admin access required" });
+        if (!req.user.isAdmin) {
+            return res.status(403).json({ message: "Forbidden: Admin access required" });
+        }
 
         const deleted = await Booking.findByIdAndDelete(bookingId);
         if (!deleted) return next(errorHandler(404, "Booking not found"));
