@@ -19,6 +19,11 @@ import chapterRoutes from "./routes/chapter.route.js";
 import lectureRoutes from "./routes/lecture.route.js";
 import enrollmentRoutes from "./routes/enrollment.route.js";
 
+//hasini's routes
+import availabilityRoutes from "./routes/availability.route.js";
+import lecturerRoutes from './routes/lecturer.route.js';
+import scheduleRoutes from './routes/schedule.route.js';
+
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
@@ -59,6 +64,11 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/chapters", chapterRoutes);
 app.use("/api/lectures", lectureRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
+
+//hasini's
+app.use("/api/availability", availabilityRoutes);
+app.use('/api/lecturers', lecturerRoutes);
+app.use('/api/schedules', scheduleRoutes);
 
 // WebSocket Real-Time Dashboard Data
 let totalUsers = 7;
