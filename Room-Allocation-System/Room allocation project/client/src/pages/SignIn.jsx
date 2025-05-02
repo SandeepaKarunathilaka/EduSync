@@ -34,7 +34,7 @@ export default function SignIn() {
       if (data.isAdmin) {
         navigate('/');
       } else {
-        navigate('/homepage');
+        navigate('/');
       }
     } catch (err) {
       dispatch(signInFailure(err));

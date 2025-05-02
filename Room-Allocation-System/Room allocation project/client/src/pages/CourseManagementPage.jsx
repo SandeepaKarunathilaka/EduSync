@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Button, Typography, Spin } from "antd";
 import CoursesTable from "../components/CoursesTable"
-import CreateEditCourseModal from "../components/CreateEditCourseModal";
+// import CreateEditCourseModal from "../components/CreateEditCourseModal";
+import CreateCourseModal from "../components/CreateCourseModal";
+
 import courseApi from "../api/courseApi";
 
 const { Title } = Typography;
@@ -37,7 +39,7 @@ const CourseManagementPage = () => {
         }}
       >
         <Title level={2}>Course Management</Title>
-        <Button type="primary" onClick={() => setIsModalOpen(true)}>
+        <Button style={{ color: "blue" }} type="primary" onClick={() => setIsModalOpen(true)}>
           Create Course
         </Button>
       </div>
@@ -60,10 +62,10 @@ const CourseManagementPage = () => {
         />
       )}
 
-      <CreateEditCourseModal
-        open={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onDataUpdate={async () => {
+<CreateCourseModal
+  open={isModalOpen}
+  onClose={() => setIsModalOpen(false)}
+  onDataUpdate={async () => {
           try {
             const data = await courseApi.getAllCourses();
             setCourses(data);
