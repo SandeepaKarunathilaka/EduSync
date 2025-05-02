@@ -17,7 +17,7 @@ import bookingRoutes from "./routes/booking.route.js";
 import courseRoutes from "./routes/course.route.js";
 import chapterRoutes from "./routes/chapter.route.js";
 import lectureRoutes from "./routes/lecture.route.js";
-// import enrollmentRoutes from "./modules/enrollment/route.js";
+import enrollmentRoutes from "./routes/enrollment.route.js";
 
 dotenv.config();
 const app = express();
@@ -58,7 +58,7 @@ app.use("/api/bookings", bookingRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/chapters", chapterRoutes);
 app.use("/api/lectures", lectureRoutes);
-// app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/enrollments", enrollmentRoutes);
 
 // WebSocket Real-Time Dashboard Data
 let totalUsers = 7;

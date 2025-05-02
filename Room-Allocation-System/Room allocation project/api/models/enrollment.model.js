@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const enrollmentSchema = new mongoose.Schema({
     course: {
         type: mongoose.Schema.Types.ObjectId,
@@ -20,4 +21,5 @@ const enrollmentSchema = new mongoose.Schema({
     },
 }, { timestamps: true });
 
-export default mongoose.model("Enrollment", enrollmentSchema);
+const Enrollment = mongoose.model("Enrollment", enrollmentSchema);
+export default Enrollment;
