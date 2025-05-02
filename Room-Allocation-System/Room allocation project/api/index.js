@@ -16,7 +16,7 @@ import bookingRoutes from "./routes/booking.route.js";
 // Course Management routes
 import courseRoutes from "./routes/course.route.js";
 import chapterRoutes from "./routes/chapter.route.js";
-// import lectureRoutes from "./modules/lecture/route.js";
+import lectureRoutes from "./routes/lecture.route.js";
 // import enrollmentRoutes from "./modules/enrollment/route.js";
 
 dotenv.config();
@@ -57,7 +57,7 @@ app.use("/api/bookings", bookingRoutes);
 // Course Management Routes (merged)
 app.use("/api/courses", courseRoutes);
 app.use("/api/chapters", chapterRoutes);
-// app.use("/api/lectures", lectureRoutes);
+app.use("/api/lectures", lectureRoutes);
 // app.use("/api/enrollments", enrollmentRoutes);
 
 // WebSocket Real-Time Dashboard Data
