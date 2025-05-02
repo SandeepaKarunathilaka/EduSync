@@ -1,57 +1,59 @@
-
-import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
-
-import '../css/home.css'
+import facebook from "../images/facebook.png";
+import gmail from "../images/gmail.png";
+import google from "../images/google-maps.png";
+import instr from "../images/instagram.png";
+import linkedin from "../images/linkedin.png";
+import youtube from "../images/youtube.png";
 
 export default function Footer() {
   return (
-    <div className="footer">
-      <section className="footer pti-bg-light_blue">
-        <div className="container d-flex gap-5 justify-content-center pt-5">
-            <div className="d-flex flex-column gap-2">
-                <div className="footer-logo"></div>
-                <div className="footer-test pti-text-p">Lorem ipsum dolor sit amet, <br /> consectetur adipiscing elit. </div>
-                <div className="d-flex gap-4">
-                  <div><i className="fa-brands fa-facebook" ></i></div>
-                  <div><i className="fa-brands fa-instagram" ></i></div>
-                  <div><i className="fa-brands fa-twitter" ></i></div>
-                  <div><i className="fa-brands fa-linkedin" ></i></div>
-                </div>
+    <div className="bg-slate-900 broder-none">
+      <div className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          
+          {/* Column 1 */}
+          <div className="text-white">
+            <h1 className="text-lg font-serif mb-2">Follow Us:</h1>
+            <p className="mb-1">dfdfdfdfdfdf</p>
+            <p>dfdfdfdfdfdf</p>
+          </div>
+          
+          {/* Column 2 */}
+          <div className="text-white">
+            <h1 className="text-lg font-serif mb-2">Get in Touch:</h1>
+            <p className="mb-1">dfdfdfdfdfdf</p>
+            <p>dfdfdfdfdfdf</p>
+          </div>
+          
+          {/* Column 3 */}
+          <div className="text-white">
+            <h1 className="text-lg font-serif mb-2">Our Services:</h1>
+            <p className="mb-1">dfdfdfdfdfdf</p>
+            <p>dfdfdfdfdfdf</p>
+          </div>
+          
+          {/* Column 4 */}
+          <div className="text-white">
+            <h1 className="text-lg font-serif mb-2">Contact Us:</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <img src={google} className="w-6 rounded-lg" alt="Google" />
+              <h1>new one</h1>
             </div>
-            <div>
-              <div>
-                <ol className="pti-footer-ol">
-                  <li className="pti-text-h3 pti-bold">Our catergorize</li>
-                  <li className="pti-text-p pt-2">Factory Uniforms</li>
-                  <li className="pti-text-p">School Uniforms</li>
-                  <li className="pti-text-p">Military Uniforms</li>
-                  <li className="pti-text-p">Military Uniforms</li>
-                  <li className="pti-text-p">Towels</li>
-                </ol>
-              </div>
+            <div className="flex items-center gap-2">
+              <img src={gmail} className="w-6 rounded-lg" alt="Gmail" />
+              <h1>new one</h1>
             </div>
-            <div>
-            <div>
-                <ol className="pti-footer-ol">
-                  <li className="pti-text-h3 pti-bold">Our Services</li>
-                  <li className="pti-text-p pt-2">Online Marketplace</li>
-                  <li className="pti-text-p">Free Delivery</li>
-                  <li className="pti-text-p">Packaging</li>
-                </ol>
-              </div>
-            </div>
-            <div>
-            <ol className="pti-footer-ol">
-                  <li className="pti-text-h3 pti-bold">Contact Us</li>
-                  <li className="pti-text-p pt-2">info@pti.com</li>
-                  <li className="pti-text-p">No 623, Piliyandala Road, Katubedda</li>
-                </ol>
-            </div>
+          </div>
+          
+          {/* Social Media Icons */}
+          
+
         </div>
-      </section>
+        
+        <div className="mt-6 text-center text-white">
+          <p>@compywirthuviersity.com</p>
+        </div>
+      </div>
     </div>
   );
 }

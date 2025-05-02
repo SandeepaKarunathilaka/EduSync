@@ -33,6 +33,12 @@ import HomeHeader from "./components/HomeHeader";
 import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/DashboardPage";
 
+//semini
+import Footer from "./components/footer";
+import Update from "./pages/Update";
+import Record from "./pages/ManageEmp";
+import headerRecord from "./components/headerRecord";
+
 export default function App() {
   axios.defaults.withCredentials = true;
   return (
@@ -56,6 +62,10 @@ export default function App() {
 {/* sandeepa */}
         <Route element={<HomePage />} path="/homepage" />
         <Route element={<DashboardPage />} path="/course-dashboard" />
+
+        {/* semini */}
+        <Route path="/manage/:idd" element={<Update />} />
+        <Route path="/record" element={<Record />} />
 
         {/* Protected Routes */}
         <Route element={<PrivateRoute />}>

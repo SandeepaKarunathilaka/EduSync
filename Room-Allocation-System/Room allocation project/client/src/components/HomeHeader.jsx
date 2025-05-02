@@ -31,7 +31,7 @@ export default function HomeHeader() {
       {/* Logo + Title */}
       <div className="flex items-center gap-3">
         <img src={LogoImage} alt="Logo" className="w-10 h-10 rounded-full" />
-        <Link to={currentUser?.isAdmin ? "/dashboard" : "/"} className="text-white text-xl font-bold">
+        <Link to={currentUser?.isAdmin ? "/" : "/"} className="text-white text-xl font-bold">
           {currentUser?.isAdmin ? "Admin Home" : "Home"}
         </Link>
       </div>

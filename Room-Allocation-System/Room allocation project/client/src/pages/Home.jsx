@@ -49,7 +49,7 @@ export default function Home() {
     { to: "/", label: "Dashboard", icon: { name: "HiDatabase" } },
     { to: "/course-dashboard", label: "Course & Class Management", icon: { name: "HiBookOpen" } },
     { to: "/faculty", label: "Faculty & Scheduling", icon: { name: "HiAcademicCap" } },
-    { to: "/enrollments", label: "Student Enrollment", icon: { name: "HiClipboardList" } },
+    { to: "/record", label: "Student Enrollment", icon: { name: "HiClipboardList" } },
     { to: "/room-dashboard", label: "Room & Resource Management", icon: { name: "HiOfficeBuilding" } },
   ];
 
