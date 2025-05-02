@@ -67,7 +67,7 @@ export default function App() {
 
         {/* Admin Routes */}
         <Route element={<OnlyAdminPrivateRoute />}>
-          <Route path="/dashboard" element={<AdminHome />} />
+          <Route path="/room-dashboard" element={<AdminHome />} />
           <Route path="/admin/rooms" element={<AdminRoomManagement />} />
           <Route path="/admin/booking" element={<AdminBookingManagement />} />
           

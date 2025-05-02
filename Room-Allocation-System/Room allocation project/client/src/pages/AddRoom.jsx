@@ -135,7 +135,7 @@ export default function AddRoom() {
             >
               <option value="Projector">Projector</option>
               <option value="A/C">A/C</option>
-              <option value="Microphone">Microphone</option>
+              <option value="Microphone">Mic</option>
               <option value="Whiteboard">Whiteboard</option>
               <option value="Smart Board">Smart Board</option>
               <option value="Computers">Computers</option>
@@ -151,7 +151,7 @@ export default function AddRoom() {
           </div>
 
           {/* Status */}
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <label
               htmlFor="status"
               className="block text-sm font-semibold text-gray-700"
@@ -164,9 +164,9 @@ export default function AddRoom() {
               className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 bg-gray-50 text-gray-900"
             >
               <option value="Available">Available</option>
-              <option value="Occupied">Occupied</option>
+              <option value="Occupied">Under Maintain</option>
             </select>
-          </div>
+          </div> */}
 
           {/* Submit Button */}
           <button

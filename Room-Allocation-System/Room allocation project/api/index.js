@@ -24,6 +24,9 @@ import availabilityRoutes from "./routes/availability.route.js";
 import lecturerRoutes from './routes/lecturer.route.js';
 import scheduleRoutes from './routes/schedule.route.js';
 
+//semini
+import recordRoutes from "./routes/record.route.js";
+
 dotenv.config();
 const app = express();
 const __dirname = path.resolve();
@@ -69,6 +72,9 @@ app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/availability", availabilityRoutes);
 app.use('/api/lecturers', lecturerRoutes);
 app.use('/api/schedules', scheduleRoutes);
+
+//semini
+app.use("/api/records", recordRoutes);
 
 // WebSocket Real-Time Dashboard Data
 let totalUsers = 7;

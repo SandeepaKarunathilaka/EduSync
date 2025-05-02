@@ -26,11 +26,11 @@ export default function Header() {
   const profileRef = useRef(null);
 
   const adminNav = [
-    { name: "Dashboard", path: "/dashboard", icon: <FaHome /> },
+    { name: "Dashboard", path: "/room-dashboard", icon: <FaHome /> },
     { name: "Rooms", path: "/rooms", icon: <FaCalendarAlt /> },
     { name: "Bookings", path: "/booking", icon: <FaBook /> },
     { name: "Class Schedules", path: "/schedules", icon: <FaCalendarAlt /> },
-    { name: "Reports", path: "/reports", icon: <FaChartBar /> },
+    
   ];
 
   const userNav = [
@@ -125,6 +125,7 @@ export default function Header() {
               >
                 Settings
               </Link>
+              <Link to="/homepage">
               <button
                 onClick={() => {
                   setIsProfileOpen(false);
@@ -133,7 +134,7 @@ export default function Header() {
                 className="w-full text-left px-4 py-2 text-red-600 hover:bg-red-100 flex items-center gap-2"
               >
                 <FaSignOutAlt /> Logout
-              </button>
+              </button></Link>
             </div>
           )}
         </div>

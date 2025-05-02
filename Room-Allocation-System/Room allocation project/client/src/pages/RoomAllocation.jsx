@@ -44,7 +44,7 @@ export default function RoomAllocation() {
     doc.text(`Generated on: ${today}`, 14, 32);
 
     // Define table headers
-    const headers = ["Room Name", "Type", "Capacity", "Resources", "Status"];
+    const headers = ["Room Name", "Type", "Capacity", "Resources"];
     const columnWidths = [40, 30, 20, 60, 30]; // Widths for each column
     let rowHeight = 40; // Starting Y position after the title
 
@@ -70,7 +70,7 @@ export default function RoomAllocation() {
         room.type,
         room.capacity.toString(),
         room.resources.join(", "),
-        room.status,
+        
       ];
 
       rowData.forEach((cell, cellIndex) => {
@@ -136,7 +136,7 @@ export default function RoomAllocation() {
                 <th className="py-3 px-6 text-center">Type</th>
                 <th className="py-3 px-6 text-center">Capacity</th>
                 <th className="py-3 px-6 text-center">Resources</th>
-                <th className="py-3 px-6 text-center">Status</th>
+                {/* <th className="py-3 px-6 text-center">Status</th> */}
                 <th className="py-3 px-6 text-center">Actions</th>
               </tr>
             </thead>
@@ -147,13 +147,13 @@ export default function RoomAllocation() {
                   <td className="py-4">{room.type}</td>
                   <td className="py-4">{room.capacity}</td>
                   <td className="py-4">{room.resources.join(", ")}</td>
-                  <td
+                  {/* <td
                     className={`py-4 font-bold ${
                       room.status === "Available" ? "text-green-600" : "text-red-600"
                     }`}
                   >
                     {room.status}
-                  </td>
+                  </td> */}
                   <td className="py-4 flex justify-center gap-3">
                     <Link to={`/updateroom/${room._id}`}>
                       <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">

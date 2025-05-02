@@ -16,7 +16,7 @@ export default function Sidebar() {
   // Sidebar Menu Items (adjusted to match the image)
   const menuItems = [
     
-    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" },
+    { name: "Dashboard", icon: <FaHome />, path: "/room-dashboard" },
     { name: "Room Management", icon: <FaBook />, path: "/rooms" },
     { name: "Booking Management", icon: <FaCalendarAlt />, path: "/booking" },
     { name: "Class Schedules", icon: <FaCalendarAlt />, path: "/schedules" },

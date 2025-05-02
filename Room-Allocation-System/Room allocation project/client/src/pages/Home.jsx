@@ -50,7 +50,7 @@ export default function Home() {
     { to: "/course-dashboard", label: "Course & Class Management", icon: { name: "HiBookOpen" } },
     { to: "/faculty", label: "Faculty & Scheduling", icon: { name: "HiAcademicCap" } },
     { to: "/enrollments", label: "Student Enrollment", icon: { name: "HiClipboardList" } },
-    { to: "/dashboard", label: "Room & Resource Management", icon: { name: "HiOfficeBuilding" } },
+    { to: "/room-dashboard", label: "Room & Resource Management", icon: { name: "HiOfficeBuilding" } },
   ];
 
   const studentLinks = [

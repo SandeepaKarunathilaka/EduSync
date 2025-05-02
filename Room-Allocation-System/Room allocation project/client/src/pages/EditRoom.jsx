@@ -152,7 +152,7 @@ export default function EditRoom() {
             </div>
 
             {/* Status */}
-            <div>
+            {/* <div>
               <label className="block font-semibold mb-1">Status</label>
               <select
                 id="status"
@@ -163,7 +163,7 @@ export default function EditRoom() {
                 <option value="Available">Available</option>
                 <option value="Occupied">Occupied</option>
               </select>
-            </div>
+            </div> */}
 
             <button
               type="submit"
